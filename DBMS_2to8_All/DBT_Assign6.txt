@@ -1,0 +1,145 @@
+				Assignment 6
+1.	Write function that accepts a positive number from a user and displays its factorial on the screen.
+
+delimiter $$
+create function my_fun_1(a int(10)) returns int(10)
+begin
+declare factorial int(10) default 1; 
+test_loop:repeat 
+set factorial=factorial * a;
+set a= a-1;
+until a=1
+end repeat;
+return factorial;
+end $$
+
+select my_fun_1(5);
+
+2.	Write a function that accepts a positive number ‘n’ and displays whether that number is a Prime number or not.
+
+
+delimiter $$
+create function my_fun_2(n int(5)) returns varchar(25)
+begin
+declare flag int(2) default 1;
+declare  i int(2) default 2;
+while i<n
+do
+	if n % i = 0 then
+		set flag = 0;
+	end if;
+    set i=i+1;
+    end while;
+if flag =1 then 
+return "prime number";
+else
+return "not a prime number";
+end if;
+end $$
+select my_fun_2(4);
+
+
+3.	Write a function to Convert an inputed number of inches into yards, feet, and inches. For example, 124 inches equals 3 yards, 1 foot, and 4 inches.
+
+
+delimiter $$
+create function my_fun(inches int(10) ) returns varchar(50)
+begin
+declare  yard int(10);
+declare  foot int(10);
+set yard = inches / 36;
+set inches = inches % 36;
+set foot = inches / 12;
+set inches = inches % 12; 
+return concat(yard,'yards',foot,'foot',inches,'inches');
+end $$
+
+select my_fun(124);
+
+
+
+4.	Write a function to update salary of the employees of specified dept by 10%. Take dept no as parameter.
+
+
+delimiter $$
+create function my_fun4(dept_no int(5)) returns int(5)
+begin
+update emp set sal = sal+(sal * 0.1) where deptno = dept_no;
+return 1;
+end $$
+
+select my_fun4(10);
+
+
+
+
+5.	Create a function named USER_ANNUAL_COMP that has a parameter p_eno for passing on the values of  an employee number of the employee and p_comp for passing the compansation. In the function calculates and returns the annual compensation of the employee by using the following formula.
+annual_compensation =  (p_sal+p_comm)*12
+If the salary or commission value is NULL then zero should be substituted for it.  Give a call to USER_ANNUAL_COMP.
+
+
+delimiter $$
+
+create function user_annual_comp(p_eno int , p_comp int) returns int
+
+begin
+declare  annual_comp int ;
+declare sal1 int;
+set sal1=(select sal  from emp where empno=p_eno);
+set annual_comp = (sal1+p_comp)*12;
+return annual_comp;
+end $$
+
+select * from emp;
+select user_annual_comp(1000,100);
+
+
+6.	Create a procedure called USER_QUERY_EMP that accepts three parameters. Parameter p_myeno is of IN parameter mode which provides the empno value. The other two parameters p_myjob and p_mysal are of OUT mode. The procedure retrieves the salary and job of an employee with the provided employee number and assigns those to the two OUT parameters respectively. The procedure should raise the error if the empno does not exist in the EMP table by displaying an appropriate message
+
+
+delimiter $$
+create procedure USER_QUERY_EMP(in p_myeno int, out p_myjob varchar(20), out p_mysal int)
+begin
+declare var int;
+set var = (select empno from emp where empno=p_myeno) ;
+if p_myeno=var then
+select sal,job into p_mysal,p_myjob from emp where empno = p_myeno;
+else
+select "Empid does not exist";
+end if;
+end $$
+
+call USER_QUERY_EMP(1,@x,@y);
+select @x,@y;
+
+
+
+7.	Create a procedure to print the inputted string in reverse order. If  inputted string is null display an appropriate message
+
+
+delimiter $$
+create procedure my_proc_7(in params varchar(20))
+begin
+declare var1 varchar(20);
+if params='' then
+select "String is null";
+else
+select reverse(params);
+end if;
+end $$
+
+
+call my_proc_7('');
+
+
+8.	Create a procedure named ‘tabledetails’ which gives all the details of a particular table stored in database.
+
+
+
+delimiter $$
+create procedure tabledetails()
+begin
+SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE';
+end $$
+
+call tabledetails();
